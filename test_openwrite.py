@@ -112,7 +112,7 @@ def test_mode_processing():
     assert "Best regards," in res_email
     print(" -> Email Mode Output:\n" + "\n".join("    " + line for line in res_email.splitlines()))
 
-    # Test 4: Voice Edit / Rewrite Mode (FreeFlow style)
+    # Test 4: Voice Edit / Rewrite Mode
     selected = "const old_variable_name = 100;"
     res_rewrite = mp.process("convert to snake case", mode="rewrite", selected_text=selected)
     print(" -> Voice Edit Output:", res_rewrite)

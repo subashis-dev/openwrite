@@ -1,6 +1,6 @@
 # OpenWrite — Sovereign AI Voice & Dictation Engine 🎙️⚡
 
-> **The Sovereign, 100% Offline AI Dictation Engine.** Synthesizing the best features of [FreeFlow](https://github.com/zachlatta/freeflow), [VoiceInk](https://github.com/beingpax/voiceink), [Handy](https://handy.computer), and [OpenWhispr](https://github.com/OpenWhispr/openwhispr) into a unified desktop and mobile engine.
+> **The Sovereign, 100% Offline AI Dictation Engine.** Real-time streaming speech-to-text directly into any Windows application with zero cloud latency and complete privacy.
 
 ---
 
@@ -8,11 +8,13 @@
 
 - **100% Offline & Private:** Zero cloud dependencies, zero telemetry, zero audio leaks. All speech-to-text inference runs entirely on your local machine.
 - **Runs Smoothly on ANY PC:** Quantized with **INT8 Faster-Whisper** execution on CPU/iGPU/APU. No NVIDIA discrete GPU required. Runs at **~80ms latency** taking less than 100MB of RAM.
-- **Global Hotkey & Direct Cursor Injection:** Press `Alt + Space` anywhere on Windows (VS Code, Slack, Word, Chrome, Terminal) to speak and have formatted text automatically pasted directly into your cursor.
+- **Global Hotkey & Direct Cursor Injection:** Press `F8`, `Fn+F8`, `F9`, `F4`, or `Alt + Space` anywhere on Windows (Notepad, Word, VS Code, Slack, Chrome) to speak and have words typed live directly into your active window.
+- **Dual UI Layout:** Toggle seamlessly between an edge-docked top toolbar (`📌 Dock`) and a draggable floating island pill (`🫧 Float`).
+- **Dynamic Model Switcher:** Switch between `Tiny.en` (30ms), `Base.en` (50ms), `Small.en` (Default), `Medium.en`, and `Distil-Large-v3` on the fly.
 - **Synthesized Shortcut Engine:** Full support for **Hybrid Mode** (Hold = Push-to-Talk, Quick Tap = Toggle Mode), **Push-to-Talk Only**, and **Toggle Only**.
-- **Voice Edit / Rewrite Mode (from FreeFlow):** Highlight any text in your editor, hold `Alt + Space`, speak an edit instruction (*"make this concise"*, *"convert to snake_case"*, *"format as bullet points"*), and it replaces the selected text in-place.
-- **App-Aware Context Ingestion (from VoiceInk):** Automatically switches modes based on your active application (e.g. `code` mode for VS Code / Cursor, `dictation` for Slack / Discord, `email` for Outlook / Gmail).
-- **Offline Meeting & Audio Transcriber (from OpenWhispr):** Drag-and-drop recorded audio files (WAV, MP3, M4A, FLAC) for batch transcription.
+- **Voice Edit / Rewrite Mode:** Highlight any text in your editor, hold hotkey, speak an edit instruction (*"make this concise"*, *"convert to snake_case"*, *"format as bullet points"*), and it replaces the selected text in-place.
+- **App-Aware Context Ingestion:** Automatically switches modes based on your active application (e.g. `code` mode for VS Code / Cursor, `dictation` for Slack / Discord, `email` for Outlook / Gmail).
+- **Offline Meeting & Audio Transcriber:** Drag-and-drop recorded audio files (WAV, MP3, M4A, FLAC) for batch transcription.
 - **SQLite FTS5 Full-Text Search:** Instant millisecond searching across your entire lifetime voice note history.
 - **Dynamic Jargon & Vocabulary Prompting:** Guarantees technical jargon, proper nouns, and developer terms (`PyTorch`, `Antigravity`, `MedVision`, `CUDA`) are recognized with 100% precision.
 - **Mobile Companion Ready (Android & iOS):** Access `http://<YOUR-PC-IP>:6992` on any phone over local Wi-Fi to use your smartphone as a wireless dictation microphone.
@@ -23,9 +25,9 @@
 ## 🚀 Quick Start
 
 ### 1. Launch OpenWrite
+Double click **`OpenWrite.exe`** (or run `OpenWrite.bat`):
 ```bash
-cd C:\Users\subas\Claude\openwrite
-python server.py
+OpenWrite.exe
 ```
 OpenWrite starts immediately on **Port 6992**:
 - Desktop Hub & Floating Island: [http://localhost:6992](http://localhost:6992)
