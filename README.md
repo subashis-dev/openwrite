@@ -53,26 +53,57 @@ OpenWrite starts immediately on **Port 6992**:
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ System Architecture
 
+```mermaid
+flowchart TD
+    subgraph FRONTENDS["OPENWRITE INTERFACES"]
+        direction LR
+        DESK["🪟 Windows Desktop App<br/>(OpenWrite.exe)"]
+        DOCK["📌 Top Docked Toolbar<br/>(Full-Width)"]
+        FLOAT["🫧 Floating Island Pill<br/>(Draggable)"]
+        MOBILE["📱 Mobile Companion<br/>(iOS / Android Web)"]
+        KEYS["⌨️ Global Hotkeys<br/>(F8 / F9 / F4 / Alt+Space)"]
+    end
+
+    FRONTENDS -->|"Audio Stream & Control Events"| ENGINE
+
+    subgraph ENGINE["SOVEREIGN CORE ENGINE (100% OFFLINE)"]
+        direction TB
+        AUDIO["🎙️ Audio Ingestion & Normalizer<br/>Native 16kHz Stream • Dynamic Gain Normalizer"]
+        VAD["⚡ Adaptive Phrase Segmenter<br/>Conversational Pause Detection • Zero Word Slicing"]
+        WHISPER["🧠 Faster-Whisper INT8 Engine<br/>Dynamic Switcher: Tiny (30ms) ➔ Distil-Large"]
+        INJECT["⌨️ Win32 Unicode Injector<br/>Zero-Focus SendInput • Direct Active Cursor Typing"]
+        
+        AUDIO --> VAD
+        VAD --> WHISPER
+        WHISPER --> INJECT
+    end
+
+    ENGINE <-->|"Context & Jargon Priming"| INTEL
+
+    subgraph INTEL["INTELLIGENCE & LOCAL STORAGE"]
+        direction LR
+        TRACKER["🎯 Target Window Inspector<br/>Notepad • Word • VS Code • Browser"]
+        VOCAB["📚 Vocabulary Engine<br/>Custom Domain Jargon & Punctuation Priming"]
+        DB["💾 Local SQLite Engine<br/>FTS5 Millisecond Search • Zero Cloud Storage"]
+    end
+
+    INJECT -->|"Live Keystrokes (0ms Focus Stealing)"| APPS["🎯 Active Document / Editor (Notepad, Word, IDE, Browser)"]
 ```
-openwrite/
-├── core/
-│   ├── audio_engine.py       # 16kHz low-latency capture + real-time RMS visualizer
-│   ├── stt_engine.py         # Quantized INT8 Faster-Whisper wrapper
-│   ├── window_inspector.py   # Windows foreground detection + selection grab & paste
-│   ├── mode_processor.py     # 6 offline transformation modes + code syntax engine
-│   ├── hotkey_listener.py    # Global pynput hook (Hybrid, Push-to-Talk, Toggle)
-│   ├── orchestrator.py       # Central pipeline orchestrator
-│   └── db.py                 # SQLite database + FTS5 full-text search
-├── web/
-│   ├── index.html            # Floating Dynamic Island + Control Dashboard
-│   ├── css/style.css         # Dark theme UI with reactive audio waveforms
-│   └── js/app.js             # WebSocket audio streamer & client controller
-├── data/
-│   └── openwrite.db          # Sovereign local database
-└── server.py                 # FastAPI server on Port 6992 + MCP endpoint
-```
+
+### Component Breakdown
+
+| Part | What it does |
+| :--- | :--- |
+| **Windows Desktop HUD** | Lightweight native interface providing an edge-docked top toolbar (`📌 Dock`) or a draggable floating island (`🫧 Float`) with live waveform animation. |
+| **Audio Capture & Normalizer** | Captures clean 16,000 Hz mono audio with dynamic peak gain normalization to guarantee maximum clarity across any microphone array. |
+| **Adaptive Phrase Segmenter** | Tracks conversational breathing pauses in real-time, segmenting spoken phrases dynamically so words are never cut in half and dictation streams indefinitely. |
+| **Quantized Whisper Engine** | Local CTranslate2 INT8 model inference running on CPU or GPU. Switch on-the-fly between `Tiny.en` (~30ms), `Base.en`, `Small.en` (Default), `Medium.en`, and `Distil-Large-v3`. |
+| **Win32 Keystroke Injector** | Emits Unicode characters directly into the active cursor using Win32 `SendInput` (`WS_EX_NOACTIVATE`), typing text live without stealing focus. |
+| **Active Window Tracker** | Automatically detects the foreground application (Notepad, VS Code, Browser, Word) and tailors capitalization, mode formatting, and context. |
+| **Sovereign Local Database** | Stores private lifetime transcript history locally in SQLite with FTS5 millisecond full-text search and custom jargon priming. |
+| **Mobile Wi-Fi Companion** | Allows any phone (iOS/Android) on the same local network to be used as a wireless dictation microphone via local WebSockets. |
 
 ---
 
