@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.tmp
+
+# Local Audio & User Recordings
+data/uploads/
+data/*.wav
+data/*.webm
+data/*.mp3
+data/*.ogg
+data/last_recording.wav
+
+# Local Database & Runtime State
+data/*.db
+data/*.db-journal
+data/*.pid
+data/*.log
+data/desktop_app.log
+data/desktop_app.pid
+
+# Large Pre-trained Models (>100MB rejected by GitHub)
+data/models/*.onnx
+data/models/*.bin
+data/models/*.safetensors
+
+# Environment & IDE
+.env
+.venv/
+venv/
+ENV/
+.idea/
+.vscode/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db

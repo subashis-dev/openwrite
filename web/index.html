@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OpenWrite — Sovereign AI Voice Engine</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Floating Dynamic Island / HUD Header -->
+  <header class="hud-container">
+    <div class="hud-pill" id="hudPill">
+      <div class="hud-left">
+        <div class="hud-indicator" id="hudIndicator"></div>
+        <div class="hud-meta">
+          <span class="hud-title" id="hudStatus">OpenWrite Ready</span>
+          <span class="hud-subtitle" id="hudAppDetail">Alt + Space anywhere</span>
+        </div>
+      </div>
+
+      <!-- Reactive Soundwave Canvas -->
+      <div class="hud-visualizer">
+        <canvas id="waveformCanvas" width="160" height="36"></canvas>
+      </div>
+
+      <div class="hud-actions">
+        <div class="mode-badge" id="currentModeBadge" title="Click to change active mode">
+          <span class="mode-dot"></span>
+          <span id="currentModeLabel">Enhancement</span>
+        </div>
+        <button class="hud-ptt-btn" id="hudPttBtn" title="Hold or Click to Dictate">
+          <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" x2="12" y1="19" y2="22"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <path d="M12 19v3"/>
+            <path d="m8 22 8 0"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <h1>OpenWrite</h1>
+          <span class="version-tag">Sovereign 1.0 • Port 6992</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-tab="dictate">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+          <span>Live Dictate</span>
+        </button>
+        <button class="nav-item" data-tab="history">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+          <span>Voice History</span>
+        </button>
+        <button class="nav-item" data-tab="meeting">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Import Audio</span>
+        </button>
+        <button class="nav-item" data-tab="vocabulary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span>Jargon & Vocab</span>
+        </button>
+        <button class="nav-item" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span>Preferences</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="spec-pill">
+          <span class="spec-dot"></span>
+          <span>100% Offline • INT8 CPU/iGPU</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <section class="content-area">
+
+      <!-- TAB 1: LIVE DICTATE -->
+      <div class="tab-panel active" id="tab-dictate">
+        <div class="panel-header">
+          <div>
+            <h2>Instant Dictation & Voice Edit</h2>
+            <p>Direct cursor injection across all Windows applications & local network.</p>
+          </div>
+          <div class="mode-selector-strip">
+            <button class="mode-chip active" data-mode="enhancement">✨ AI Enhance</button>
+            <button class="mode-chip" data-mode="dictation">🎙️ Raw Dictation</button>
+            <button class="mode-chip" data-mode="code">💻 Code Mode</button>
+            <button class="mode-chip" data-mode="email">✉️ Email Draft</button>
+            <button class="mode-chip" data-mode="rewrite">✏️ Voice Edit</button>
+            <button class="mode-chip" data-mode="assistant">🤖 Assistant</button>
+          </div>
+        </div>
+
+        <!-- Silent Mic Alert Banner -->
+        <div id="micAlertBanner" class="mic-alert-banner" style="display:none; margin-bottom: 12px;">
+          <span>⚠️ <strong id="micAlertText">Microphone has zero signal!</strong> The current mic is muted or unpowered.</span>
+          <button id="switchMicBtn" class="action-btn" style="background:#ef4444; color:#fff; border:none; padding:5px 12px; font-weight:600;">Switch to Laptop Mic</button>
+        </div>
+
+        <!-- Big Interactive Dictation Card -->
+        <div class="dictate-hero-card">
+          <div class="hero-waveform-container">
+            <canvas id="heroWaveform" width="700" height="120"></canvas>
+            <div class="waveform-overlay" id="waveformOverlay">
+              <span class="hero-status-text" id="heroStatusText">Press Alt + Space or Tap Mic</span>
+            </div>
+          </div>
+
+          <!-- Real-Time Live Dictation Streaming Bubble -->
+          <div class="live-interim-bubble" id="liveInterimBubble" style="display:none;">
+            <span class="live-dot"></span>
+            <span id="liveInterimText">Listening live... Speak now</span>
+          </div>
+
+          <div class="hero-controls">
+            <button class="main-record-btn" id="mainRecordBtn">
+              <div class="btn-glow"></div>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" x2="12" y1="19" y2="22"/>
+              </svg>
+              <span id="mainBtnText">Start Dictating</span>
+            </button>
+
+            <button class="action-btn" id="liveTalkToggleBtn" title="Toggle Live Talk with AI + Kokoro Voice" style="margin-top: 8px; padding: 8px 16px; border-radius: 999px;">
+              <span>🎙️ Live Talk (AI + Kokoro): OFF</span>
+            </button>
+
+            <div class="shortcut-tip">
+              <span>Shortcut:</span> <kbd id="shortcutDisplay">F8</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Space</kbd>
+              <span class="bullet">•</span>
+              <span id="activeAppBadge">Focused App: Auto-detecting...</span>
+            </div>
+
+            <!-- Active Microphone Selector & Live Gain Meter -->
+            <div class="mic-config-bar">
+              <div class="mic-select-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mic-mini-icon">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                </svg>
+                <select id="micDeviceSelect" class="mic-select" title="Choose input microphone">
+                  <option value="default">Default Microphone</option>
+                </select>
+              </div>
+              <div class="mic-meter-container" title="Live Volume Level (Must move when you speak)">
+                <div class="mic-meter-fill" id="micMeterFill"></div>
+              </div>
+              <span id="micLiveBadge" class="badge" style="font-size: 11px; background: rgba(255,255,255,0.06); color: var(--text-muted);">Mic: Ready</span>
+              <button class="action-btn" id="testMicBtn" title="Record 3 seconds and playback to test microphone" style="padding: 4px 8px; font-size: 11px;">
+                <span>🔊 Test Mic (3s)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Dictation Pad / Scratchpad -->
+        <div class="dictation-pad-card">
+          <div class="pad-header">
+            <div class="pad-title-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="pad-icon">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <h3>Live Dictation Pad</h3>
+              <span class="pad-stats" id="padStats">0 words • 0 chars</span>
+            </div>
+            <div class="pad-actions">
+              <label class="auto-paste-label" title="Automatically paste into your active desktop application (Notepad, Word, Cursor, etc.)">
+                <input type="checkbox" id="autoPasteCheckbox" checked>
+                <span>Auto-paste to cursor</span>
+              </label>
+              <button class="action-btn" id="speakPadBtn" title="Read entire pad with Kokoro TTS">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                <span>Speak Pad</span>
+              </button>
+              <button class="action-btn" id="copyPadBtn" title="Copy all text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span>Copy All</span>
+              </button>
+              <button class="action-btn" id="clearPadBtn" title="Clear pad">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Clear</span>
+              </button>
+              <button class="action-btn" id="downloadPadBtn" title="Download as text file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export</span>
+              </button>
+            </div>
+          </div>
+          <textarea id="dictationPad" class="dictation-pad" placeholder="Dictate your thoughts, notes, code, or emails... Your transcribed voice will appear here live! You can also type or edit directly."></textarea>
+        </div>
+
+        <!-- Last Output Display -->
+        <div class="last-output-card" id="lastOutputCard">
+          <div class="output-header">
+            <div class="output-meta">
+              <span class="badge" id="lastOutputMode">Enhancement</span>
+              <span class="time" id="lastOutputTime">Just now</span>
+              <span class="stats" id="lastOutputStats">0 words • 0ms</span>
+            </div>
+            <div class="output-actions">
+              <button class="action-btn" id="speakLastBtn" title="Read aloud with Kokoro TTS">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                <span>Speak</span>
+              </button>
+              <button class="action-btn" id="copyLastBtn" title="Copy text">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                <span>Copy</span>
+              </button>
+              <button class="action-btn" id="pasteLastBtn" title="Re-paste to active window">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                <span>Paste</span>
+              </button>
+            </div>
+          </div>
+          <div class="output-body" id="lastOutputText">
+            Dictate something to see live instant transcription here. Your speech will be automatically cleaned, formatted, and injected into your cursor!
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: VOICE HISTORY -->
+      <div class="tab-panel" id="tab-history">
+        <div class="panel-header">
+          <div>
+            <h2>Voice Notes History</h2>
+            <p>SQLite FTS5 Full-Text Indexed across all dictations.</p>
+          </div>
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="historySearchInput" placeholder="Search transcripts...">
+          </div>
+        </div>
+
+        <div class="history-list" id="historyList">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- TAB 3: IMPORT AUDIO (OpenWhispr Feature) -->
+      <div class="tab-panel" id="tab-meeting">
+        <div class="panel-header">
+          <div>
+            <h2>Import Audio & Meeting Notes</h2>
+            <p>Offline transcription for recorded meetings, interviews, and voice memos.</p>
+          </div>
+        </div>
+
+        <div class="upload-dropzone" id="uploadDropzone">
+          <input type="file" id="audioFileInput" accept="audio/*,.wav,.mp3,.m4a,.ogg,.flac" style="display:none">
+          <div class="dropzone-content">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <h3>Drop meeting recording here or browse</h3>
+            <p>Supports MP3, WAV, M4A, FLAC • Transcribed 100% offline via INT8 Whisper</p>
+            <button class="primary-btn" onclick="document.getElementById('audioFileInput').click()">Select Audio File</button>
+          </div>
+        </div>
+
+        <div class="meeting-results" id="meetingResults" style="display:none">
+          <div class="results-header">
+            <h3>Transcription Result</h3>
+            <button class="secondary-btn" id="exportTranscriptBtn">Export Markdown</button>
+          </div>
+          <div class="meeting-text" id="meetingText"></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: JARGON & VOCABULARY -->
+      <div class="tab-panel" id="tab-vocabulary">
+        <div class="panel-header">
+          <div>
+            <h2>Custom Jargon & Vocabulary</h2>
+            <p>Injected directly into Whisper's initial prompt to guarantee 100% recognition accuracy.</p>
+          </div>
+        </div>
+
+        <div class="vocab-input-card">
+          <input type="text" id="vocabInput" placeholder="Add custom term, name, or code keyword (e.g. PyTorch, subash, FastMCP)...">
+          <button class="primary-btn" id="addVocabBtn">Add Term</button>
+        </div>
+
+        <div class="vocab-cloud" id="vocabCloud">
+          <!-- Dynamically populated pills -->
+        </div>
+      </div>
+
+      <!-- TAB 5: PREFERENCES -->
+      <div class="tab-panel" id="tab-settings">
+        <div class="panel-header">
+          <div>
+            <h2>Preferences & Hardware Configuration</h2>
+            <p>Tailored for maximum responsiveness on any PC, iGPU, or APU.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3>Shortcut Mode</h3>
+            <p>How the global hotkey behaves.</p>
+            <div class="setting-row">
+              <label>Mode</label>
+              <select id="settingShortcutMode">
+                <option value="hybrid">Hybrid (Hold = PTT, Tap = Toggle)</option>
+                <option value="push_to_talk">Push-to-Talk Only (Hold to speak)</option>
+                <option value="toggle">Toggle Only (Tap to start/stop)</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label>Global Hotkey</label>
+              <input type="text" id="settingHotkey" value="<alt>+<space>">
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Speech Engine (Offline Whisper)</h3>
+            <p>Optimized for low-end CPUs and integrated graphics.</p>
+            <div class="setting-row">
+              <label>Model Size</label>
+              <select id="settingModelName">
+                <option value="tiny.en" selected>tiny.en (75MB • Ultra Fast ~80ms)</option>
+                <option value="base.en">base.en (140MB • High Accuracy)</option>
+                <option value="small.en">small.en (460MB • Best Accuracy)</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label>Compute Type</label>
+              <select id="settingComputeType">
+                <option value="int8" selected>INT8 Quantized (Recommended for iGPU/CPU)</option>
+                <option value="float32">Float32</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Desktop Integration</h3>
+            <p>Direct cursor injection and smart application detection.</p>
+            <div class="setting-row checkbox-row">
+              <label for="settingAutoPaste">Direct Auto-Paste into Active App</label>
+              <input type="checkbox" id="settingAutoPaste" checked>
+            </div>
+            <div class="setting-row checkbox-row">
+              <label for="settingAppAware">App-Aware Mode Switching (Code vs Email vs Chat)</label>
+              <input type="checkbox" id="settingAppAware" checked>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3>Mobile & Network Companion</h3>
+            <p>Access from any Android or iPhone over local Wi-Fi.</p>
+            <div class="setting-row">
+              <label>Local Server Port</label>
+              <input type="text" value="6992" disabled>
+            </div>
+            <p class="hint-text">Open <code>http://&lt;Your-PC-IP&gt;:6992</code> in your phone browser to dictate straight into your PC from your mobile device!</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
